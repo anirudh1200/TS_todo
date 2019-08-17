@@ -1,16 +1,24 @@
 import React from 'react';
-import { StyleSheet, FlatList } from 'react-native-web';
+import { StyleSheet, FlatList, View, Text } from 'react-native-web';
 import IndivisualTask from './IndivisualTask.tsx';
 import Task from '../interfaces/Task.Interface';
+import { ReducerState } from '../store/reducer';
+import { connect } from 'react-redux';
 
-let tasks: Task[];
+interface PropsInterface {
+	tasks: Task[]
+}
 
-tasks = [
-	{ todo: 'first', key: 1 },
-	{ todo: 'second', key: 2 }
-]
-
-export default () => {
+const TaskList: React.FC<PropsInterface> = ({ tasks }) => {
+	if (tasks.length === 0) {
+		return (
+			<View style={styles.box}>
+				<Text>
+					You have no todos !!!
+				</Text>
+			</View>
+		)
+	}
 	return (
 		<FlatList
 			style={styles.box}
@@ -26,11 +34,19 @@ export default () => {
 	)
 }
 
+const mapStateToProps = (state: ReducerState) => {
+	return {
+		tasks: state.tasks
+	}
+}
+
+export default connect(mapStateToProps)(TaskList);
+
 const styles = StyleSheet.create({
 	box: {
 		padding: 20,
 		margin: 'auto',
-		width: '50%',
+		width: '40%',
 		backgroundColor: 'rgba(10,10,10,.1)'
 	}
 });

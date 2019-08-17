@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import { TextInput, StyleSheet, View } from 'react-native-web';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { ADD_TODO } from '../store/actions';
+import Task from '../interfaces/Task.Interface';
 
-export default () => {
+interface PropInterface {
+	addTask: (task: Task) => {
+		type: string;
+		task: Task;
+	}
+}
+
+// const TaskInput: React.FC<PropInterface> = props => {
+const TaskInput: React.FC<PropInterface> = props => {
 	const [todoValue, setTodoValue] = useState('');
 	return (
 		<View style={styles.textView}>
@@ -11,13 +23,22 @@ export default () => {
 				value={todoValue}
 				onChangeText={value => setTodoValue(value)}
 				onSubmitEditing={() => {
-					console.log(todoValue);
+					let newTask: Task = { todo: todoValue, key: Math.floor(Math.random() * 1000) };
+					props.addTask(newTask);
 					setTodoValue('');
 				}}
 			/>
 		</View>
 	)
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+	return {
+		addTask: (task: Task) => dispatch({ type: ADD_TODO, task: task })
+	}
+}
+
+export default connect(null, mapDispatchToProps)(TaskInput);
 
 const styles = StyleSheet.create({
 	textInput: {
